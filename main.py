@@ -45,20 +45,20 @@ async def inline(query: types.InlineQuery):
         car = auto[0]+' '+auto[1]
 
 
-        #ПОИСК ПО СЛОВУ(В НЕ ЗАВИСИМОСТИ ГДЕ ОНО, МОЖНО ВБИТЬ МОДЕЛЬ)
-        text_words=text.replace('(', ' ').replace(')', ' ').replace('/', ' ').split()
-        car_words=car.replace('(', ' ').replace(')', ' ').replace('/', ' ').split()
 
-        for text_word in text_words:
-            for car_word in car_words:
-                if car_word.lower()==text_word.lower():
-                    result.append(InlineQueryResultArticle(
-                            id=f'{id}', title=f"{car}",
-                            description=f"{car}",
-                            input_message_content=InputTextMessageContent(
-                                message_text=f"{car}")
-                        ))
-                    id += 1
+
+        # КОЛИЧЕСТВО ВВЕДЕННЫХ СИМВОЛОВ В ЗАПРОС
+        len = list(text).__len__()
+        a = car[:len]
+        if a.lower() == text.lower():
+            result.append(InlineQueryResultArticle(
+                id=f'{id}', title=f"{car}",
+                description=f"{car}",
+                input_message_content=InputTextMessageContent(
+                    message_text=f"{car}")
+            ))
+
+            id += 1
 
 
     #ПОИСК ПО НАЧАЛУ(ТО ЕСТЬ НАДО НАЧАТЬ ПИСАТЬ СНАЧАЛА МАРКУ, ПОТОМ МОДЕЛЬ И ПОСЛЕ КАЖДОЙ БУКВЫЙ БУДЕТ ПОДСКАЗКА ВЫХОДИТЬ)
@@ -67,19 +67,21 @@ async def inline(query: types.InlineQuery):
         result=[]
         for auto in autos:
             car = auto[0] + ' ' + auto[1]
+            # ПОИСК ПО СЛОВУ(В НЕ ЗАВИСИМОСТИ ГДЕ ОНО, МОЖНО ВБИТЬ МОДЕЛЬ)
+            text_words = text.replace('(', ' ').replace(')', ' ').replace('/', ' ').split()
+            car_words = car.replace('(', ' ').replace(')', ' ').replace('/', ' ').split()
+            for text_word in text_words:
+                for car_word in car_words:
+                    if car_word.lower() == text_word.lower():
+                        result.append(InlineQueryResultArticle(
+                            id=f'{id}', title=f"{car}",
+                            description=f"{car}",
+                            input_message_content=InputTextMessageContent(
+                                message_text=f"{car}")
+                        ))
+                        id += 1
 
-            # КОЛИЧЕСТВО ВВЕДЕННЫХ СИМВОЛОВ В ЗАПРОС
-            len = list(text).__len__()
-            a = car[:len]
-            if a.lower() == text.lower():
-                result.append(InlineQueryResultArticle(
-                    id=f'{id}', title=f"{car}",
-                    description=f"{car}",
-                    input_message_content=InputTextMessageContent(
-                        message_text=f"{car}")
-                ))
 
-                id += 1
 
 
     #СПИСОК АВТОМОБИЛЕЙ
