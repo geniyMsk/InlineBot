@@ -34,10 +34,9 @@ async def inline(query: types.InlineQuery):
         await bot.answer_inline_query(query.id, [result])
 
 
-    #КОЛИЧЕСТВО ВВЕДЕННЫХ СИМВОЛОВ В ЗАПРОС
-    len =list(text).__len__()
 
-    i=0
+
+    id=0
     result = []
 
     #ПЕРЕБИРАЕМ МАССИВ С АВТО
@@ -52,36 +51,43 @@ async def inline(query: types.InlineQuery):
 
         for text_word in text_words:
             for car_word in car_words:
-                if car_word.lower()==text_word.lower() :
+                if car_word.lower()==text_word.lower():
                     result.append(InlineQueryResultArticle(
-                            id=f'{i}', title=f"{car}",
+                            id=f'{id}', title=f"{car}",
                             description=f"{car}",
                             input_message_content=InputTextMessageContent(
                                 message_text=f"{car}")
                         ))
-                    i += 1
-        a = car[:len]
+                    id += 1
+
+
     #ПОИСК ПО НАЧАЛУ(ТО ЕСТЬ НАДО НАЧАТЬ ПИСАТЬ СНАЧАЛА МАРКУ, ПОТОМ МОДЕЛЬ И ПОСЛЕ КАЖДОЙ БУКВЫЙ БУДЕТ ПОДСКАЗКА ВЫХОДИТЬ)
-    if i == 0:
+    if id>50 or id==0:
+        id=0
+        result=[]
         for auto in autos:
             car = auto[0] + ' ' + auto[1]
+
+            # КОЛИЧЕСТВО ВВЕДЕННЫХ СИМВОЛОВ В ЗАПРОС
+            len = list(text).__len__()
             a = car[:len]
             if a.lower() == text.lower():
                 result.append(InlineQueryResultArticle(
-                    id=f'{i}', title=f"{car}",
+                    id=f'{id}', title=f"{car}",
                     description=f"{car}",
                     input_message_content=InputTextMessageContent(
                         message_text=f"{car}")
                 ))
 
-                i += 1
+                id += 1
 
 
     #СПИСОК АВТОМОБИЛЕЙ
-    if i<=50 and i!=0:
+    if id<=50 and id!=0:
         await bot.answer_inline_query(query.id, result)
+
     #МНОГО АВТОМОБИЛЕЙ(>50)
-    elif i>50:
+    elif id>50:
         r = InlineQueryResultArticle(
                 id='1', title='Недостаточно данных',
                 description='Слишком много результатов',
@@ -89,6 +95,7 @@ async def inline(query: types.InlineQuery):
                     message_text='Бот для определения марки и модели автомобиля')
             )
         await bot.answer_inline_query(query.id, [r])
+
     #АВТОМОБИЛЬ НЕ НАЙДЕН
     else:
         x = InlineQueryResultArticle(
