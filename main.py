@@ -33,21 +33,14 @@ async def inline(query: types.InlineQuery):
             )
         await bot.answer_inline_query(query.id, [result])
 
-
-
-
+#СЧЁТЧИК НАЙДЕННЫХ АВТОМОБИЛЕЙ
     id=0
-    result = []
+#МАССИВ НАЙДЕННЫХ АВТО
+    result = [] 
 
-    #ПЕРЕБИРАЕМ МАССИВ С АВТО
+#ПОИСК ПО НАЧАЛУ(ТО ЕСТЬ НАДО НАЧАТЬ ПИСАТЬ СНАЧАЛА МАРКУ, ПОТОМ МОДЕЛЬ И ПОСЛЕ КАЖДОЙ БУКВЫЙ БУДЕТ ПОДСКАЗКА ВЫХОДИТЬ)
     for auto in autos:
-        #МАССИВ -> СТРОКА
         car = auto[0]+' '+auto[1]
-
-
-
-
-        # КОЛИЧЕСТВО ВВЕДЕННЫХ СИМВОЛОВ В ЗАПРОС
         len = list(text).__len__()
         a = car[:len]
         if a.lower() == text.lower():
@@ -61,13 +54,13 @@ async def inline(query: types.InlineQuery):
             id += 1
 
 
-    #ПОИСК ПО НАЧАЛУ(ТО ЕСТЬ НАДО НАЧАТЬ ПИСАТЬ СНАЧАЛА МАРКУ, ПОТОМ МОДЕЛЬ И ПОСЛЕ КАЖДОЙ БУКВЫЙ БУДЕТ ПОДСКАЗКА ВЫХОДИТЬ)
+# ПОИСК ПО СЛОВУ(В НЕ ЗАВИСИМОСТИ ГДЕ ОНО, МОЖНО ВБИТЬ МОДЕЛЬ, НАРИМЕР)
+# НАЧИНАЕТСЯ ПОИСК ПО НЕМУ ЕСЛИ ПЕРВЫЙ ВЫДАЛ БОЛЬШЕ 50, ЛИБО НИЧЕГО НЕ ВЫДАЛ
     if id>50 or id==0:
         id=0
         result=[]
         for auto in autos:
             car = auto[0] + ' ' + auto[1]
-            # ПОИСК ПО СЛОВУ(В НЕ ЗАВИСИМОСТИ ГДЕ ОНО, МОЖНО ВБИТЬ МОДЕЛЬ)
             text_words = text.replace('(', ' ').replace(')', ' ').replace('/', ' ').split()
             car_words = car.replace('(', ' ').replace(')', ' ').replace('/', ' ').split()
             for text_word in text_words:
