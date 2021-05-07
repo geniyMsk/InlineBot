@@ -23,7 +23,6 @@ autos = table['values']
 async def inline(query: types.InlineQuery):
     #ТЕКСТ ЗАПРОСА
     text = query.query
-
     #ПОДСКАЗКА
     if text == '':
         result = InlineQueryResultArticle(
@@ -33,6 +32,7 @@ async def inline(query: types.InlineQuery):
             message_text='Бот для определения марки и модели автомобиля')
             )
         await bot.answer_inline_query(query.id, [result])
+
 
     #КОЛИЧЕСТВО ВВЕДЕННЫХ СИМВОЛОВ В ЗАПРОС
     len =list(text).__len__()
@@ -45,21 +45,56 @@ async def inline(query: types.InlineQuery):
         #МАССИВ -> СТРОКА
         car = auto[0]+' '+auto[1]
 
-        a=car[:len]
 
-        if a.lower()==text.lower():
-            result.append(InlineQueryResultArticle(
-            id=f'{i}', title=f"{car}",
-            description=f"{car}",
+        #ПОИСК ПО СЛОВУ(В НЕ ЗАВИСИМОСТИ ГДЕ ОНО, МОЖНО ВБИТЬ МОДЕЛЬ)
+        text_words=text.replace('(', ' ').replace(')', ' ').replace('/', ' ').split()
+        car_words=car.replace('(', ' ').replace(')', ' ').replace('/', ' ').split()
+
+        for text_word in text_words:
+            for car_word in car_words:
+                if car_word.lower()==text_word.lower() :
+                    result.append(InlineQueryResultArticle(
+                            id=f'{i}', title=f"{car}",
+                            description=f"{car}",
+                            input_message_content=InputTextMessageContent(
+                                message_text=f"{car}")
+                        ))
+                    i += 1
+        a = car[:len]
+    #ПОИСК ПО НАЧАЛУ(ТО ЕСТЬ НАДО НАЧАТЬ ПИСАТЬ СНАЧАЛА МАРКУ, ПОТОМ МОДЕЛЬ И ПОСЛЕ КАЖДОЙ БУКВЫЙ БУДЕТ ПОДСКАЗКА ВЫХОДИТЬ)
+    if i == 0:
+        for auto in autos:
+            car = auto[0] + ' ' + auto[1]
+            a = car[:len]
+            if a.lower() == text.lower():
+                result.append(InlineQueryResultArticle(
+                    id=f'{i}', title=f"{car}",
+                    description=f"{car}",
+                    input_message_content=InputTextMessageContent(
+                        message_text=f"{car}")
+                ))
+
+                i += 1
+
+
+    #СПИСОК АВТОМОБИЛЕЙ
+    if i<=50 and i!=0:
+        await bot.answer_inline_query(query.id, result)
+    #МНОГО АВТОМОБИЛЕЙ(>50)
+    elif i>50:
+        r = InlineQueryResultArticle(
+                id='1', title='Недостаточно данных',
+                description='Слишком много результатов',
+                input_message_content=InputTextMessageContent(
+                    message_text='Бот для определения марки и модели автомобиля')
+            )
+        await bot.answer_inline_query(query.id, [r])
+    #АВТОМОБИЛЬ НЕ НАЙДЕН
+    else:
+        x = InlineQueryResultArticle(
+            id='1', title='Не найдено',
+            description='Такого автомобиля нет',
             input_message_content=InputTextMessageContent(
-            message_text=f"{car}")
-            ))
-
-            i+=1
-            if i>50:
-                return
-    await bot.answer_inline_query(query.id, result)
-
-
-
-
+                message_text='Бот для определения марки и модели автомобиля')
+        )
+        await bot.answer_inline_query(query.id, [x])
