@@ -1,7 +1,7 @@
 from aiogram import executor
 
 from loader import dp
-import main
+import handlers.inline_handlers, handlers.message_handlers
 from utils.notify_admins import on_startup_notify
 from utils.set_bot_commands import set_default_commands
 
