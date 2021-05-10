@@ -71,6 +71,8 @@ async def model_in_message(message: types.Message):
         try:
             par =(model_in, chatid)
             await db.update_model(par=par)
+            await message.answer(f"Ваш автомобиль {car}")
+
         except:
             message.answer("Произошла ошибка, пожалуйста укажите модель заново")
     else:
